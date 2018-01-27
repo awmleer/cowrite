@@ -1,4 +1,6 @@
-package cowrite;
+package server;
+
+import proto.Test;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -6,7 +8,7 @@ import java.net.Socket;
 import java.util.HashSet;
 
 
-public class Cowrite {
+public class Main {
 
     private static final int PORT = 9001;
 
@@ -21,7 +23,7 @@ public class Cowrite {
      * The set of all the print writers for all the clients.  This
      * set is kept so we can easily broadcast messages.
      */
-    private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
+    private static HashSet<ObjectOutputStream> writers = new HashSet<>();
 
     /**
      * The appplication main method, which just listens on a port and
@@ -66,6 +68,7 @@ public class Cowrite {
          * broadcasts them.
          */
         public void run() {
+
             try {
 
                 // Create character streams for the socket.
@@ -77,37 +80,38 @@ public class Cowrite {
                 // a name is submitted that is not already used.  Note that
                 // checking for the existence of a name and adding the name
                 // must be done while locking the set of names.
-                while (true) {
-                    out.writeObject(new Test());
-                    name = in.readLine();
-                    if (name == null) {
-                        return;
-                    }
-                    synchronized (names) {
-                        if (!names.contains(name)) {
-                            names.add(name);
-                            break;
-                        }
-                    }
-                }
+                out.writeObject(new Test());
+//                while (true) {
+//                    out.writeObject(new Test());
+//                    name = in.readLine();
+//                    if (name == null) {
+//                        return;
+//                    }
+//                    synchronized (names) {
+//                        if (!names.contains(name)) {
+//                            names.add(name);
+//                            break;
+//                        }
+//                    }
+//                }
 
                 // Now that a successful name has been chosen, add the
                 // socket's print writer to the set of all writers so
                 // this client can receive broadcast messages.
-                out.println("NAMEACCEPTED");
+//                out.println("NAMEACCEPTED");
                 writers.add(out);
 
                 // Accept messages from this client and broadcast them.
                 // Ignore other clients that cannot be broadcasted to.
-                while (true) {
-                    String input = in.readLine();
-                    if (input == null) {
-                        return;
-                    }
-                    for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + ": " + input);
-                    }
-                }
+//                while (true) {
+//                    String input = in.readLine();
+//                    if (input == null) {
+//                        return;
+//                    }
+////                    for (ObjectOutputStream writer : writers) {
+////                        writer.println("MESSAGE " + name + ": " + input);
+////                    }
+//                }
             } catch (IOException e) {
                 System.out.println(e);
             } finally {

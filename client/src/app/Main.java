@@ -1,11 +1,5 @@
 package app;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -65,6 +59,8 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws Exception {
+        SocketClient socketClient = SocketClient.getSocketClient();
+        socketClient.test();
         launch(args);
     }
 }
