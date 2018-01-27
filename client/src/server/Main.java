@@ -1,5 +1,6 @@
 package server;
 
+import proto.SocketData;
 import proto.Test;
 
 import java.io.*;
@@ -11,6 +12,8 @@ import java.util.HashSet;
 public class Main {
 
     private static final int PORT = 9001;
+
+
 
     /**
      * The set of all names of clients in the chat room.  Maintained
@@ -80,7 +83,8 @@ public class Main {
                 // a name is submitted that is not already used.  Note that
                 // checking for the existence of a name and adding the name
                 // must be done while locking the set of names.
-                out.writeObject(new Test());
+                Test t = new Test();
+                out.writeObject(new SocketData<>("test",t));
 //                while (true) {
 //                    out.writeObject(new Test());
 //                    name = in.readLine();
@@ -95,10 +99,6 @@ public class Main {
 //                    }
 //                }
 
-                // Now that a successful name has been chosen, add the
-                // socket's print writer to the set of all writers so
-                // this client can receive broadcast messages.
-//                out.println("NAMEACCEPTED");
                 writers.add(out);
 
                 // Accept messages from this client and broadcast them.

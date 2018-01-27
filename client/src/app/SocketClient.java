@@ -1,6 +1,7 @@
 package app;
 
 
+import proto.SocketData;
 import proto.Test;
 
 import java.io.IOException;
@@ -32,10 +33,10 @@ public class SocketClient {
 
     public void test(){
         try {
-            Test test = (Test) inputStream.readObject();
-            System.out.println("Object received = " + test);
-            System.out.println(test.a);
-            System.out.println(test.b);
+            SocketData<Test> data = (SocketData<Test>) inputStream.readObject();
+            System.out.println("Object received = " + data.getData());
+            System.out.println(data.getData().a);
+            System.out.println(data.getData().b);
         }catch (Exception e){
             System.out.println("test failed");
         }
