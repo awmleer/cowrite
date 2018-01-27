@@ -2,9 +2,11 @@ package view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import app.Main;
 import model.Document;
+
 
 
 public class HomeController {
@@ -48,6 +50,16 @@ public class HomeController {
         // Initialize the person table with the two columns.
         creatorColumn.setCellValueFactory(cellData -> cellData.getValue().creatorProperty());
         titleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
+        documentTable.setRowFactory(tv -> {
+            TableRow<Document> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Document document = row.getItem();
+                    System.out.println(document.getTitle());
+                }
+            });
+            return row ;
+        });
     }
 
     public void setMainApp(Main mainApp) {
@@ -55,4 +67,5 @@ public class HomeController {
         // Add observable list data to the table
         documentTable.setItems(this.mainApp.getDocumentList());
     }
+
 }
