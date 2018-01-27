@@ -1,7 +1,6 @@
 package view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import app.Main;
@@ -12,9 +11,9 @@ public class HomeController {
     @FXML
     private TableView<Document> documentTable;
     @FXML
-    private TableColumn<Document, String> firstNameColumn;
+    private TableColumn<Document, String> creatorColumn;
     @FXML
-    private TableColumn<Document, String> lastNameColumn;
+    private TableColumn<Document, String> titleColumn;
 
 //    @FXML
 //    private Label firstNameLabel;
@@ -47,8 +46,8 @@ public class HomeController {
     @FXML
     private void initialize() {
         // Initialize the person table with the two columns.
-        firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
-        lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
+        creatorColumn.setCellValueFactory(cellData -> cellData.getValue().creatorProperty());
+        titleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
     }
 
     public void setMainApp(Main mainApp) {

@@ -24,8 +24,8 @@
                <children>
                   <TableView fx:id="documentTable" layoutX="14.0" layoutY="58.0" prefHeight="398.0" prefWidth="416.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="firstNameColumn" prefWidth="75.0" text="First" />
-                      <TableColumn fx:id="lastNameColumn" prefWidth="75.0" text="Last" />
+                      <TableColumn fx:id="creatorColumn" maxWidth="500.0" minWidth="150.0" prefWidth="150.0" text="Creator" />
+                      <TableColumn fx:id="titleColumn" maxWidth="500.0" minWidth="250.0" prefWidth="250.0" text="Title" />
                     </columns>
                   </TableView>
                </children>
