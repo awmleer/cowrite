@@ -1,11 +1,11 @@
 package server;
 
-import proto.SocketData;
-import proto.Test;
+import proto.*;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -14,13 +14,35 @@ public class Main {
     private static final int PORT = 9001;
 
 
+    private HashSet<User> users = new HashSet<>();
+    private User getUser(int id){
+        for (User d: users){
+            if(d.getId()==id) return d;
+        }
+        return null;
+    }
+    private User getUser(String username){
+        for (User d: users){
+            if(d.getUsername().equals(username)) return d;
+        }
+        return null;
+    }
 
-    /**
-     * The set of all names of clients in the chat room.  Maintained
-     * so that we can check that new clients are not registering name
-     * already in use.
-     */
-    private static HashSet<String> names = new HashSet<String>();
+    private HashSet<Document> documents = new HashSet<>();
+    private Document getDocument(int id){
+        for (Document d: documents){
+            if(d.getId()==id) return d;
+        }
+        return null;
+    }
+    private Document getDocument(String shareCode){
+        for (Document d: documents){
+            if(d.getShareCode().equals(shareCode)) return d;
+        }
+        return null;
+    }
+
+    private HashMap<User, ObjectOutputStream> userToWriterMap = new HashMap<>();
 
     /**
      * The set of all the print writers for all the clients.  This
@@ -52,7 +74,7 @@ public class Main {
     private static class Handler extends Thread {
         private String name;
         private Socket socket;
-        private BufferedReader in;
+        private ObjectInputStream in;
         private ObjectOutputStream out;
 
         /**
@@ -71,63 +93,44 @@ public class Main {
          * broadcasts them.
          */
         public void run() {
-
             try {
-
-                // Create character streams for the socket.
-                in = new BufferedReader(new InputStreamReader(
-                        socket.getInputStream()));
+                in = new ObjectInputStream(socket.getInputStream());
                 out = new ObjectOutputStream(socket.getOutputStream());
-
-                // Request a name from this client.  Keep requesting until
-                // a name is submitted that is not already used.  Note that
-                // checking for the existence of a name and adding the name
-                // must be done while locking the set of names.
                 Test t = new Test();
                 out.writeObject(new SocketData<>("test",t));
-//                while (true) {
-//                    out.writeObject(new Test());
-//                    name = in.readLine();
-//                    if (name == null) {
-//                        return;
-//                    }
-//                    synchronized (names) {
-//                        if (!names.contains(name)) {
-//                            names.add(name);
-//                            break;
-//                        }
-//                    }
-//                }
-
+                while (true) {
+                    try {
+                        SocketDataBase data = (SocketDataBase) in.readObject();
+                        if(data==null) break;
+                        switch (data.getMeta()){
+                            case "test":
+                                handleTest(data, out);
+                        }
+                    }catch (ClassNotFoundException e){
+                        e.printStackTrace();
+                    }
+                }
                 writers.add(out);
 
-                // Accept messages from this client and broadcast them.
-                // Ignore other clients that cannot be broadcasted to.
-//                while (true) {
-//                    String input = in.readLine();
-//                    if (input == null) {
-//                        return;
-//                    }
-////                    for (ObjectOutputStream writer : writers) {
-////                        writer.println("MESSAGE " + name + ": " + input);
-////                    }
-//                }
             } catch (IOException e) {
                 System.out.println(e);
             } finally {
                 // This client is going down!  Remove its name and its print
                 // writer from the sets, and close its socket.
-                if (name != null) {
-                    names.remove(name);
-                }
                 if (out != null) {
                     writers.remove(out);
                 }
                 try {
                     socket.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
+
+        private void handleTest(SocketDataBase base, ObjectOutputStream out){
+
+        }
     }
+
 }

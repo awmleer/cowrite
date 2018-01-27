@@ -2,8 +2,8 @@ package proto;
 
 import java.io.Serializable;
 
-public class SocketData<T> implements Serializable {
-    private String meta;
+
+public class SocketData<T> extends SocketDataBase {
     private T data;
 
     private SocketData(){}
@@ -13,9 +13,6 @@ public class SocketData<T> implements Serializable {
         this.data=data;
     }
 
-    public String getMeta(){
-        return meta;
-    }
     public T getData(){
         return data;
     }

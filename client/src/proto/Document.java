@@ -2,6 +2,7 @@ package proto;
 
 public class Document {
     private int id;
+    private String shareCode;
     private String title;
     private String content;
 
@@ -13,6 +14,10 @@ public class Document {
 
     public int getId() {
         return id;
+    }
+
+    public String getShareCode() {
+        return shareCode;
     }
 
     public String getTitle() {
