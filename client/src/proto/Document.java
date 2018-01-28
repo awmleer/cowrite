@@ -1,8 +1,11 @@
 package proto;
 
+import java.util.HashSet;
+
 public class Document {
     private int id;
-    private String shareCode;
+    private User creator;
+    private HashSet<User> editingUsers;
     private String title;
     private String content;
 
@@ -16,8 +19,8 @@ public class Document {
         return id;
     }
 
-    public String getShareCode() {
-        return shareCode;
+    public User getCreator() {
+        return creator;
     }
 
     public String getTitle() {
@@ -28,4 +31,15 @@ public class Document {
         return content;
     }
 
+    public HashSet<User> getEditingUsers() {
+        return editingUsers;
+    }
+
+    public void addEditingUser(User user){
+        this.editingUsers.add(user);
+    }
+
+    public void removeEditingUser(User user){
+        this.editingUsers.remove(user);
+    }
 }

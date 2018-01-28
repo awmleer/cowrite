@@ -36,12 +36,6 @@ public class Main {
         }
         return null;
     }
-    private Document getDocument(String shareCode){
-        for (Document d: documents){
-            if(d.getShareCode().equals(shareCode)) return d;
-        }
-        return null;
-    }
 
     private HashMap<User, ObjectOutputStream> userToWriterMap = new HashMap<>();
 
