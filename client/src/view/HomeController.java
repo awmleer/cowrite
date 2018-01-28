@@ -1,10 +1,16 @@
 package view;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import app.Main;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.Document;
 
+import java.io.IOException;
 
 
 public class HomeController {
@@ -57,12 +63,14 @@ public class HomeController {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     Document document = row.getItem();
+                    this.mainApp.openDocument(document.getId());
                     System.out.println(document.getTitle());
                 }
             });
             return row ;
         });
     }
+
 
     @FXML
     private void loginButtonClicked(){
