@@ -1,9 +1,7 @@
 package view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import app.Main;
 import model.Document;
 
@@ -16,6 +14,10 @@ public class HomeController {
     private TableColumn<Document, String> creatorColumn;
     @FXML
     private TableColumn<Document, String> titleColumn;
+    @FXML
+    private Button loginButton;
+    @FXML
+    private Label usernameLabel;
 
 //    @FXML
 //    private Label firstNameLabel;
@@ -60,6 +62,11 @@ public class HomeController {
             });
             return row ;
         });
+    }
+
+    @FXML
+    private void loginButtonClicked(){
+        usernameLabel.setText("test login");
     }
 
     public void setMainApp(Main mainApp) {

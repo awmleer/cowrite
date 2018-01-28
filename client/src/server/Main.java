@@ -1,5 +1,6 @@
 package server;
 
+import javafx.fxml.FXML;
 import proto.*;
 
 import java.io.*;
@@ -131,6 +132,7 @@ public class Main {
         private void handleTest(SocketDataBase base, ObjectOutputStream out){
 
         }
+
     }
 
 }
