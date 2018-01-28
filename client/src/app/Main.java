@@ -17,25 +17,11 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    private ObservableList<Document> documentList = FXCollections.observableArrayList();
-
-    public ObservableList<Document> getDocumentList() {
-        return documentList;
-    }
 
     private Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        documentList.add(new Document("Hans", "Muster"));
-        documentList.add(new Document("Ruth", "Mueller"));
-        documentList.add(new Document("Heinz", "Kurz"));
-        documentList.add(new Document("Cornelia", "Meier"));
-        documentList.add(new Document("Werner", "Meyer"));
-        documentList.add(new Document("Lydia", "Kunz"));
-        documentList.add(new Document("Anna", "Best"));
-        documentList.add(new Document("Stefan", "Meier"));
-        documentList.add(new Document("Martin", "Mueller"));
 
         // Load person overview.
         FXMLLoader loader = new FXMLLoader();
