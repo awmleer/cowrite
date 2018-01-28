@@ -2,14 +2,12 @@ package app;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import model.Document;
 import view.DocController;
 import view.HomeController;
 
@@ -52,7 +50,7 @@ public class Main extends Application {
 
     public static void main(String[] args) throws Exception {
         SocketClient socketClient = SocketClient.getSocketClient();
-        socketClient.test();
+//        socketClient.test();
         launch(args);
     }
 

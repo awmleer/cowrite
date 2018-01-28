@@ -1,7 +1,9 @@
 package app;
 
 
+import proto.Login;
 import proto.SocketData;
+import proto.SocketDataBase;
 import proto.Test;
 
 import java.io.IOException;
@@ -24,21 +26,35 @@ public class SocketClient {
             socket = new Socket(host, port);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
+            new Handler(inputStream).start();
             System.out.println("Connected");
             isConnected=true;
-        }catch (IOException e){
-            return;
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
-    public void test(){
+//    public void test(){
+//        try {
+//            SocketData<Test> data = (SocketData<Test>) inputStream.readObject();
+//            System.out.println("Object received = " + data.getData());
+//            System.out.println(data.getData().a);
+//            System.out.println(data.getData().b);
+//        }catch (Exception e){
+//            System.out.println("test failed");
+//        }
+//    }
+
+    public boolean login(String username, String password) {
         try {
-            SocketData<Test> data = (SocketData<Test>) inputStream.readObject();
-            System.out.println("Object received = " + data.getData());
-            System.out.println(data.getData().a);
-            System.out.println(data.getData().b);
-        }catch (Exception e){
-            System.out.println("test failed");
+            outputStream.writeObject(new SocketData<>(
+                    "login",
+                    new Login(username, password)
+            ));
+            return true;
+        }catch (IOException e){
+            return false;
         }
     }
 
@@ -49,6 +65,26 @@ public class SocketClient {
         return socketClient;
     }
 
-
+    private class Handler extends Thread {
+        ObjectInputStream in;
+        Handler(ObjectInputStream in){
+            this.in=in;
+        }
+        public void run(){
+            try {
+                while (true){
+                    SocketDataBase data = (SocketDataBase) inputStream.readObject();
+                    System.out.println("Data received: "+data.getMeta());
+//                    System.out.println("Object received = " + data.getData());
+//                    System.out.println(data.getData().a);
+//                    System.out.println(data.getData().b);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
+
+
