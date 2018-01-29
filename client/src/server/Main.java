@@ -1,6 +1,5 @@
 package server;
 
-import javafx.fxml.FXML;
 import proto.*;
 
 import java.io.*;
@@ -9,7 +8,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 
 public class Main {
@@ -70,11 +68,7 @@ public class Main {
         users.add(new User(2, "lucy", "456"));
     }
 
-    /**
-     * A handler thread class.  Handlers are spawned from the listening
-     * loop and are responsible for a dealing with a single client
-     * and broadcasting its messages.
-     */
+
     private static class Handler extends Thread {
         private String name;
         private Socket socket;
@@ -83,28 +77,15 @@ public class Main {
 
         private User userForThisSocket;
 
-        /**
-         * Constructs a handler thread, squirreling away the socket.
-         * All the interesting work is done in the run method.
-         */
         Handler(Socket socket) {
             this.socket = socket;
         }
 
-        /**
-         * Services this thread's client by repeatedly requesting a
-         * screen name until a unique one has been submitted, then
-         * acknowledges the name and registers the output stream for
-         * the client in a global set, then repeatedly gets inputs and
-         * broadcasts them.
-         */
         public void run() {
             try {
                 out = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
                 writers.add(out);
-//                Test t = new Test();
-//                out.writeObject(new SocketData<>("test",t));
                 try {
                     while (true) {
                         System.out.println("going to read data");
@@ -202,8 +183,6 @@ public class Main {
 
         private void updateDocuments() throws IOException{
             System.out.println("update documents");
-//            Document[] documentArray=(Document[]) documents.toArray();
-//            System.out.println(documentArray.length);
             for(ObjectOutputStream out: writers){
                 out.writeObject(new SocketData<>(
                         "updateDocuments",

@@ -11,8 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.function.Function;
 
 public class SocketClient {
     private static SocketClient socketClient = null;
@@ -50,17 +48,6 @@ public class SocketClient {
             e.printStackTrace();
         }
     }
-
-//    public void test(){
-//        try {
-//            SocketData<Test> data = (SocketData<Test>) inputStream.readObject();
-//            System.out.println("Object received = " + data.getData());
-//            System.out.println(data.getData().a);
-//            System.out.println(data.getData().b);
-//        }catch (Exception e){
-//            System.out.println("test failed");
-//        }
-//    }
 
     public void login(String username, String password) {
         try {

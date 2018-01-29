@@ -1,13 +1,11 @@
 package proto;
 
 import java.io.Serializable;
-import java.util.HashSet;
 
 public class Document implements Serializable {
     private int id;
     private static int nextId=0;
     private User creator;
-    private HashSet<User> editingUsers;
     private String title;
     private String content;
 
@@ -37,15 +35,4 @@ public class Document implements Serializable {
         this.content=content;
     }
 
-    public HashSet<User> getEditingUsers() {
-        return editingUsers;
-    }
-
-    public void addEditingUser(User user){
-        this.editingUsers.add(user);
-    }
-
-    public void removeEditingUser(User user){
-        this.editingUsers.remove(user);
-    }
 }

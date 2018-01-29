@@ -27,6 +27,9 @@ public class DocController {
 
     public void setStage(Stage stage){
         this.stage=stage;
+        this.stage.setOnHiding(e->{
+            SocketClient.getSocketClient().stopDocumentEditing();
+        });
     }
 
     public void initDocument(int id){

@@ -1,7 +1,5 @@
 package proto;
 
-import java.io.Serializable;
-
 
 public class SocketData<T> extends SocketDataBase {
     private T data;
