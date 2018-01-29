@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import app.Main;
 import model.DocumentRow;
+import proto.Document;
 import proto.User;
 
 import java.util.Optional;
@@ -59,9 +60,6 @@ public class HomeController {
 //                }
 //            }
         });
-        documentRowList.add(new DocumentRow(1, "Hans", "Muster"));
-        documentRowList.add(new DocumentRow(2, "Ruth", "Mueller"));
-        documentRowList.add(new DocumentRow(3, "Heinz", "Kurz"));
         creatorColumn.setCellValueFactory(cellData -> cellData.getValue().creatorProperty());
         titleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         documentTable.setRowFactory(tv -> {
@@ -121,6 +119,12 @@ public class HomeController {
         }else{
             usernameLabel.setText(user.getUsername());
             loginButton.setVisible(false);
+        }
+    }
+
+    public void updateDocumentList(Document[] documents){
+        for (Document document: documents) {
+            documentRowList.add(new DocumentRow(document.getId(), document.getCreator().getUsername(), document.getTitle()));
         }
     }
 

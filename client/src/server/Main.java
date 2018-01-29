@@ -145,6 +145,10 @@ public class Main {
                             "updateUser",
                             user
                     ));
+                    out.writeObject(new SocketData<>(
+                            "updateDocuments",
+                            documents
+                    ));
                 }
             }
         }

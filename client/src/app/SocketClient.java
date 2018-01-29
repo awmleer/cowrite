@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.function.Function;
 
 public class SocketClient {
@@ -87,6 +88,9 @@ public class SocketClient {
                         case "updateUser":
                             handleUpdateUser(data);
                             break;
+                        case "updateDocuments":
+                            handleUpdateDocuments(data);
+                            break;
                     }
 //                    System.out.println("Object received = " + data.getData());
 //                    System.out.println(data.getData().a);
@@ -99,6 +103,10 @@ public class SocketClient {
         private void handleUpdateUser(SocketDataBase data){
             user=((SocketData<User>)data).getData();
             Platform.runLater(()->homeController.updateUser(user));
+        }
+        private void handleUpdateDocuments(SocketDataBase data){
+            HashSet<Document> documents=((SocketData<HashSet<Document>>)data).getData();
+            System.out.println(documents.size());
         }
     }
 
