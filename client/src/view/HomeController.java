@@ -80,12 +80,12 @@ public class HomeController {
 
     @FXML
     private void loginButtonClicked(){
-        usernameLabel.setText("test login");
+//        usernameLabel.setText("test login");
         TextInputDialog dialog;
         Optional<String> result;
         dialog = new TextInputDialog("");
         dialog.setTitle("Login");
-        dialog.setHeaderText("Login");
+        dialog.setHeaderText("Username");
         dialog.setContentText("Please enter your username:");
         result = dialog.showAndWait();
         String username;
@@ -96,7 +96,7 @@ public class HomeController {
         }
         dialog = new TextInputDialog("");
         dialog.setTitle("Login");
-        dialog.setHeaderText("Login");
+        dialog.setHeaderText("Password");
         dialog.setContentText("Please enter your password:");
         result = dialog.showAndWait();
         String password;
@@ -115,7 +115,13 @@ public class HomeController {
     }
 
     public void updateUser(User user){
-        usernameLabel.setText(user.getUsername());
+        if(user==null){
+            usernameLabel.setText("Please login");
+            loginButton.setVisible(true);
+        }else{
+            usernameLabel.setText(user.getUsername());
+            loginButton.setVisible(false);
+        }
     }
 
 }

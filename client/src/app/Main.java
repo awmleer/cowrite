@@ -26,7 +26,7 @@ public class Main extends Application {
         loader.setLocation(Main.class.getResource("../view/Home.fxml"));
         Parent root = loader.load();
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Cowrite");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
         this.stage =primaryStage;
