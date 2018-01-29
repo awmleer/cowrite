@@ -5,23 +5,16 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Document {
+public class DocumentRow {
 
     private final IntegerProperty id;
     private final StringProperty creator;
     private final StringProperty title;
 
-    public Document() {
-        this(null, null);
-    }
-
-
-    public Document(String creator, String title) {
+    public DocumentRow(int id, String creator, String title) {
+        this.id = new SimpleIntegerProperty(id);
         this.creator = new SimpleStringProperty(creator);
         this.title = new SimpleStringProperty(title);
-
-        // Some initial dummy data, just for convenient testing.
-        this.id = new SimpleIntegerProperty(1234);
     }
 
     public String getCreator() {

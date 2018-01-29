@@ -1,18 +1,19 @@
 package proto;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Document {
+public class Document implements Serializable {
     private int id;
     private User creator;
     private HashSet<User> editingUsers;
     private String title;
     private String content;
 
-    public Document(int id, String title, String content){
+    public Document(int id, User creator, String title){
         this.id=id;
+        this.creator=creator;
         this.title=title;
-        this.content=content;
     }
 
     public int getId() {

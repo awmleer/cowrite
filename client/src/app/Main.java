@@ -43,6 +43,7 @@ public class Main extends Application {
 //        FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("../view/Home.fxml"));
         HomeController controller = loader.getController();
+        SocketClient.getSocketClient().setHomeController(controller);
         controller.setMainApp(this);
 //        stage.show();
     }

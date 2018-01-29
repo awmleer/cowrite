@@ -15,29 +15,29 @@ public class Main {
     private static final int PORT = 9001;
 
 
-    private HashSet<User> users = new HashSet<>();
-    private User getUser(int id){
+    private static HashSet<User> users = new HashSet<>();
+    private static User getUser(int id){
         for (User d: users){
             if(d.getId()==id) return d;
         }
         return null;
     }
-    private User getUser(String username){
+    private static User getUser(String username){
         for (User d: users){
             if(d.getUsername().equals(username)) return d;
         }
         return null;
     }
 
-    private HashSet<Document> documents = new HashSet<>();
-    private Document getDocument(int id){
+    private static HashSet<Document> documents = new HashSet<>();
+    private static Document getDocument(int id){
         for (Document d: documents){
             if(d.getId()==id) return d;
         }
         return null;
     }
 
-    private HashMap<User, ObjectOutputStream> userToWriterMap = new HashMap<>();
+    private static HashMap<User, ObjectOutputStream> userToWriterMap = new HashMap<>();
 
     /**
      * The set of all the print writers for all the clients.  This
@@ -50,6 +50,7 @@ public class Main {
      * spawns handler threads.
      */
     public static void main(String[] args) throws Exception {
+        initData();
         System.out.println("The chat server is running.");
         ServerSocket listener = new ServerSocket(PORT);
         try {
@@ -59,6 +60,11 @@ public class Main {
         } finally {
             listener.close();
         }
+    }
+
+    private static void initData(){
+        users.add(new User(1, "john", "123"));
+        users.add(new User(2, "lucy", "456"));
     }
 
     /**
@@ -89,24 +95,29 @@ public class Main {
          */
         public void run() {
             try {
-                in = new ObjectInputStream(socket.getInputStream());
                 out = new ObjectOutputStream(socket.getOutputStream());
-                Test t = new Test();
-                out.writeObject(new SocketData<>("test",t));
-                while (true) {
-                    try {
+                in = new ObjectInputStream(socket.getInputStream());
+                writers.add(out);
+//                Test t = new Test();
+//                out.writeObject(new SocketData<>("test",t));
+                try {
+                    while (true) {
+                        System.out.println("going to read data");
                         SocketDataBase data = (SocketDataBase) in.readObject();
+                        System.out.println(data);
                         if(data==null) break;
                         switch (data.getMeta()){
                             case "test":
-                                handleTest(data, out);
+                                handleTest(data);
+                                break;
+                            case "login":
+                                handleLogin((SocketData<Login>) data);
+                                break;
                         }
-                    }catch (ClassNotFoundException e){
-                        e.printStackTrace();
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                writers.add(out);
-
             } catch (IOException e) {
                 System.out.println(e);
             } finally {
@@ -123,8 +134,25 @@ public class Main {
             }
         }
 
-        private void handleTest(SocketDataBase base, ObjectOutputStream out){
-
+        private void handleLogin(SocketData<Login> data) throws IOException{
+            Login login = data.getData();
+            User user = getUser(login.getUsername());
+            if (user==null){
+                return;
+            }else{
+                if(user.checkPassword(login.getPassword())){
+                    out.writeObject(new SocketData<>(
+                            "updateUser",
+                            user
+                    ));
+                }
+            }
+        }
+        private void handleTest(SocketDataBase base) throws IOException{
+            Test t = new Test();
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(new SocketData<>("test",t));
+            out.close();
         }
 
     }

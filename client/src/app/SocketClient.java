@@ -1,15 +1,15 @@
 package app;
 
 
-import proto.Login;
-import proto.SocketData;
-import proto.SocketDataBase;
-import proto.Test;
+import javafx.application.Platform;
+import proto.*;
+import view.HomeController;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.function.Function;
 
 public class SocketClient {
     private static SocketClient socketClient = null;
@@ -20,6 +20,14 @@ public class SocketClient {
     private ObjectInputStream inputStream = null;
     private ObjectOutputStream outputStream = null;
     private boolean isConnected = false;
+
+    private User user;
+
+    private HomeController homeController;
+    public void setHomeController(HomeController homeController) {
+        System.out.println("set home controller");
+        this.homeController = homeController;
+    }
 
     private SocketClient(){
         try{
@@ -73,8 +81,13 @@ public class SocketClient {
         public void run(){
             try {
                 while (true){
-                    SocketDataBase data = (SocketDataBase) inputStream.readObject();
+                    SocketDataBase data = (SocketDataBase) in.readObject();
                     System.out.println("Data received: "+data.getMeta());
+                    switch (data.getMeta()){
+                        case "updateUser":
+                            handleUpdateUser(data);
+                            break;
+                    }
 //                    System.out.println("Object received = " + data.getData());
 //                    System.out.println(data.getData().a);
 //                    System.out.println(data.getData().b);
@@ -82,6 +95,10 @@ public class SocketClient {
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+        private void handleUpdateUser(SocketDataBase data){
+            user=((SocketData<User>)data).getData();
+            Platform.runLater(()->homeController.updateUser(user));
         }
     }
 

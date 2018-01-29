@@ -1,39 +1,35 @@
 package view;
 
+import app.SocketClient;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import app.Main;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import model.Document;
+import model.DocumentRow;
+import proto.User;
 
-import java.io.IOException;
 import java.util.Optional;
 
 
 public class HomeController {
     @FXML
-    private TableView<Document> documentTable;
+    private TableView<DocumentRow> documentTable;
     @FXML
-    private TableColumn<Document, String> creatorColumn;
+    private TableColumn<DocumentRow, String> creatorColumn;
     @FXML
-    private TableColumn<Document, String> titleColumn;
+    private TableColumn<DocumentRow, String> titleColumn;
     @FXML
     private Button loginButton;
     @FXML
     private Label usernameLabel;
 
 
-    private ObservableList<Document> documentList = FXCollections.observableArrayList();
+    private ObservableList<DocumentRow> documentRowList = FXCollections.observableArrayList();
 
-    public ObservableList<Document> getDocumentList() {
-        return documentList;
+    public ObservableList<DocumentRow> getDocumentRowList() {
+        return documentRowList;
     }
 
 
@@ -54,8 +50,8 @@ public class HomeController {
      */
     @FXML
     private void initialize() {
-        documentList.addListener((ListChangeListener<Document>) change -> {
-            documentTable.setItems(documentList);
+        documentRowList.addListener((ListChangeListener<DocumentRow>) change -> {
+            documentTable.setItems(documentRowList);
 //            while (change.next()) {
 //                if (change.wasUpdated()) {
 //                    SomeObservableClass changedItem = observableList.get(change.getFrom());
@@ -63,24 +59,18 @@ public class HomeController {
 //                }
 //            }
         });
-        documentList.add(new Document("Hans", "Muster"));
-        documentList.add(new Document("Ruth", "Mueller"));
-        documentList.add(new Document("Heinz", "Kurz"));
-        documentList.add(new Document("Cornelia", "Meier"));
-        documentList.add(new Document("Werner", "Meyer"));
-        documentList.add(new Document("Lydia", "Kunz"));
-        documentList.add(new Document("Anna", "Best"));
-        documentList.add(new Document("Stefan", "Meier"));
-        documentList.add(new Document("Martin", "Mueller"));
+        documentRowList.add(new DocumentRow(1, "Hans", "Muster"));
+        documentRowList.add(new DocumentRow(2, "Ruth", "Mueller"));
+        documentRowList.add(new DocumentRow(3, "Heinz", "Kurz"));
         creatorColumn.setCellValueFactory(cellData -> cellData.getValue().creatorProperty());
         titleColumn.setCellValueFactory(cellData -> cellData.getValue().titleProperty());
         documentTable.setRowFactory(tv -> {
-            TableRow<Document> row = new TableRow<>();
+            TableRow<DocumentRow> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
-                    Document document = row.getItem();
-                    this.mainApp.openDocument(document.getId());
-                    System.out.println(document.getTitle());
+                    DocumentRow documentRow = row.getItem();
+                    this.mainApp.openDocument(documentRow.getId());
+                    System.out.println(documentRow.getTitle());
                 }
             });
             return row ;
@@ -91,18 +81,41 @@ public class HomeController {
     @FXML
     private void loginButtonClicked(){
         usernameLabel.setText("test login");
-        TextInputDialog dialog = new TextInputDialog("walter");
+        TextInputDialog dialog;
+        Optional<String> result;
+        dialog = new TextInputDialog("");
         dialog.setTitle("Login");
         dialog.setHeaderText("Login");
         dialog.setContentText("Please enter your username:");
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(name -> System.out.println("Your name: " + name));
+        result = dialog.showAndWait();
+        String username;
+        if (result.isPresent()){
+            username=result.get();
+        }else{
+            return;
+        }
+        dialog = new TextInputDialog("");
+        dialog.setTitle("Login");
+        dialog.setHeaderText("Login");
+        dialog.setContentText("Please enter your password:");
+        result = dialog.showAndWait();
+        String password;
+        if (result.isPresent()){
+            password=result.get();
+        }else{
+            return;
+        }
+        SocketClient.getSocketClient().login(username,password);
     }
 
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
         // Add observable list data to the table
-        documentTable.setItems(getDocumentList());
+        documentTable.setItems(getDocumentRowList());
+    }
+
+    public void updateUser(User user){
+        usernameLabel.setText(user.getUsername());
     }
 
 }
