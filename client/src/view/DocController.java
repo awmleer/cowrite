@@ -1,5 +1,6 @@
 package view;
 
+import app.SocketClient;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -17,7 +18,10 @@ public class DocController {
     private void initialize(){
         textProperty= contentEditor.textProperty();
         textProperty.addListener((observable, oldValue, newValue) -> {
-            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
+            if(oldValue!=null&&newValue!=null&&!oldValue.equals(newValue)){
+                SocketClient.getSocketClient().editDocument(newValue);
+                System.out.println("TextField Text Changed (newValue: " + newValue + ")");
+            }
         });
     }
 
@@ -26,7 +30,11 @@ public class DocController {
     }
 
     public void initDocument(int id){
-        System.out.println(id);
+        SocketClient.getSocketClient().startDocumentEditing(id);
+    }
+
+    public void setText(String content){
+        contentEditor.setText(content);
     }
 
 }

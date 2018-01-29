@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 
 public class Main {
@@ -39,6 +40,7 @@ public class Main {
     }
 
     private static HashMap<User, ObjectOutputStream> userToWriterMap = new HashMap<>();
+    private static HashMap<User, Document> userToDocumentMap = new HashMap<>();
 
     /**
      * The set of all the print writers for all the clients.  This
@@ -52,7 +54,7 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
         initData();
-        System.out.println("The chat server is running.");
+        System.out.println("The server is running.");
         ServerSocket listener = new ServerSocket(PORT);
         try {
             while (true) {
@@ -115,6 +117,16 @@ public class Main {
                                 break;
                             case "addDocument":
                                 handleAddDocument(((SocketData<String >)data).getData());
+                                break;
+                            case "startEditDocument":
+                                handleStartEditDocument(((SocketData<Integer>)data).getData());
+                                break;
+                            case "stopEditDocument":
+                                handleStopEditDocument();
+                                break;
+                            case "editDocument":
+                                handleEditDocument(((SocketData<String>)data).getData());
+                                break;
                         }
                     }
                 }catch (Exception e){
@@ -127,6 +139,9 @@ public class Main {
                 // writer from the sets, and close its socket.
                 if (out != null) {
                     writers.remove(out);
+                    if(userForThisSocket!=null){
+                        userToWriterMap.remove(userForThisSocket);
+                    }
                 }
                 try {
                     socket.close();
@@ -143,6 +158,7 @@ public class Main {
             }else{
                 if(user.checkPassword(login.getPassword())){
                     userForThisSocket=user;
+                    userToWriterMap.put(userForThisSocket,out);
                     out.writeObject(new SocketData<>(
                             "updateUser",
                             user
@@ -156,15 +172,44 @@ public class Main {
             System.out.println(documents.size());
             updateDocuments();
         }
+        private void handleStartEditDocument(Integer id)throws IOException{
+            Document document=getDocument(id);
+            userToDocumentMap.put(userForThisSocket,document);
+            out.writeObject(new SocketData<>(
+                    "updateDocument",
+                    document.getContent()
+            ));
+        }
+        private void handleStopEditDocument(){
+            userToDocumentMap.remove(userForThisSocket);
+        }
+        private void handleEditDocument(String content)throws IOException{
+            Document document=userToDocumentMap.get(userForThisSocket);
+            document.setContent(content);
+            System.out.println(content);
+            for(HashMap.Entry<User,Document> entry: userToDocumentMap.entrySet()){
+                if(entry.getValue()==document){
+                    ObjectOutputStream writer=userToWriterMap.get(entry.getKey());
+                    if(writer!=out){
+                        writer.writeObject(new SocketData<>(
+                                "updateDocument",
+                                document.getContent()
+                        ));
+                    }
+                }
+            }
+        }
 
         private void updateDocuments() throws IOException{
             System.out.println("update documents");
 //            Document[] documentArray=(Document[]) documents.toArray();
 //            System.out.println(documentArray.length);
-            out.writeObject(new SocketData<>(
-                    "updateDocuments",
-                    new ArrayList<>(documents)
-            ));
+            for(ObjectOutputStream out: writers){
+                out.writeObject(new SocketData<>(
+                        "updateDocuments",
+                        new ArrayList<>(documents)
+                ));
+            }
         }
     }
 

@@ -1,7 +1,6 @@
 package app;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -74,9 +73,13 @@ public class Main extends Application {
             DocController controller = loader.getController();
             controller.setStage(dialogStage);
             controller.initDocument(id);
+            SocketClient.getSocketClient().setDocController(controller);
 
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
+            dialogStage.setOnHiding(e->{
+                SocketClient.getSocketClient().stopDocumentEditing();
+            });
 
 //            return controller.isOkClicked();
         } catch (IOException e) {

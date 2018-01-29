@@ -33,6 +33,9 @@ public class Document implements Serializable {
     public String getContent() {
         return content;
     }
+    public void setContent(String content){
+        this.content=content;
+    }
 
     public HashSet<User> getEditingUsers() {
         return editingUsers;

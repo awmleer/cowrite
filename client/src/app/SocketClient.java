@@ -3,6 +3,7 @@ package app;
 
 import javafx.application.Platform;
 import proto.*;
+import view.DocController;
 import view.HomeController;
 
 import java.io.IOException;
@@ -29,6 +30,11 @@ public class SocketClient {
     public void setHomeController(HomeController homeController) {
         System.out.println("set home controller");
         this.homeController = homeController;
+    }
+
+    private DocController docController;
+    public void setDocController(DocController docController){
+        this.docController=docController;
     }
 
     private SocketClient(){
@@ -78,6 +84,39 @@ public class SocketClient {
         }
     }
 
+    public void startDocumentEditing(int id){
+        try{
+            outputStream.writeObject(new SocketData<>(
+                    "startEditDocument",
+                    new Integer(id)
+            ));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void stopDocumentEditing(){
+        try{
+            outputStream.writeObject(new SocketData<>(
+                    "stopEditDocument",
+                    null
+            ));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void editDocument(String content){
+        try{
+            outputStream.writeObject(new SocketData<>(
+                    "editDocument",
+                    content
+            ));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 
     public static SocketClient getSocketClient(){
         if(socketClient==null){
@@ -103,6 +142,9 @@ public class SocketClient {
                         case "updateDocuments":
                             handleUpdateDocuments(data);
                             break;
+                        case "updateDocument":
+                            handleUpdateDocument(data);
+                            break;
                     }
 //                    System.out.println("Object received = " + data.getData());
 //                    System.out.println(data.getData().a);
@@ -120,6 +162,14 @@ public class SocketClient {
             ArrayList<Document> documents=((SocketData<ArrayList<Document>>)data).getData();
             System.out.println(documents.size());
             homeController.updateDocumentList(documents);
+        }
+        private void handleUpdateDocument(SocketDataBase data){
+            String content=((SocketData<String>)data).getData();
+            Platform.runLater(()->{
+                System.out.println("document update value:");
+                System.out.println(content);
+                docController.setText(content);
+            });
         }
     }
 
