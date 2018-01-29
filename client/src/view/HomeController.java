@@ -11,6 +11,8 @@ import model.DocumentRow;
 import proto.Document;
 import proto.User;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -25,6 +27,8 @@ public class HomeController {
     private Button loginButton;
     @FXML
     private Label usernameLabel;
+    @FXML
+    private Button addDocumentButton;
 
 
     private ObservableList<DocumentRow> documentRowList = FXCollections.observableArrayList();
@@ -106,6 +110,20 @@ public class HomeController {
         SocketClient.getSocketClient().login(username,password);
     }
 
+    @FXML
+    private void addDocumentButtonClicked(){
+        TextInputDialog dialog;
+        Optional<String> result;
+        dialog = new TextInputDialog("");
+        dialog.setTitle("Login");
+        dialog.setHeaderText("Username");
+        dialog.setContentText("Please enter your username:");
+        result = dialog.showAndWait();
+        if (result.isPresent()){
+            SocketClient.getSocketClient().addDocument(result.get());
+        }
+    }
+
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
         // Add observable list data to the table
@@ -116,13 +134,16 @@ public class HomeController {
         if(user==null){
             usernameLabel.setText("Please login");
             loginButton.setVisible(true);
+            addDocumentButton.setVisible(false);
         }else{
             usernameLabel.setText(user.getUsername());
             loginButton.setVisible(false);
+            addDocumentButton.setVisible(true);
         }
     }
 
-    public void updateDocumentList(Document[] documents){
+    public void updateDocumentList(ArrayList<Document> documents){
+        documentRowList.clear();
         for (Document document: documents) {
             documentRowList.add(new DocumentRow(document.getId(), document.getCreator().getUsername(), document.getTitle()));
         }

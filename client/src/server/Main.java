@@ -6,6 +6,7 @@ import proto.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -78,6 +79,8 @@ public class Main {
         private ObjectInputStream in;
         private ObjectOutputStream out;
 
+        private User userForThisSocket;
+
         /**
          * Constructs a handler thread, squirreling away the socket.
          * All the interesting work is done in the run method.
@@ -107,12 +110,11 @@ public class Main {
                         System.out.println(data);
                         if(data==null) break;
                         switch (data.getMeta()){
-                            case "test":
-                                handleTest(data);
-                                break;
                             case "login":
-                                handleLogin((SocketData<Login>) data);
+                                handleLogin(((SocketData<Login>)data).getData());
                                 break;
+                            case "addDocument":
+                                handleAddDocument(((SocketData<String >)data).getData());
                         }
                     }
                 }catch (Exception e){
@@ -134,31 +136,36 @@ public class Main {
             }
         }
 
-        private void handleLogin(SocketData<Login> data) throws IOException{
-            Login login = data.getData();
+        private void handleLogin(Login login) throws IOException{
             User user = getUser(login.getUsername());
             if (user==null){
                 return;
             }else{
                 if(user.checkPassword(login.getPassword())){
+                    userForThisSocket=user;
                     out.writeObject(new SocketData<>(
                             "updateUser",
                             user
                     ));
-                    out.writeObject(new SocketData<>(
-                            "updateDocuments",
-                            documents
-                    ));
+                    updateDocuments();
                 }
             }
         }
-        private void handleTest(SocketDataBase base) throws IOException{
-            Test t = new Test();
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(new SocketData<>("test",t));
-            out.close();
+        private void handleAddDocument(String title) throws IOException{
+            documents.add(new Document(userForThisSocket,title));
+            System.out.println(documents.size());
+            updateDocuments();
         }
 
+        private void updateDocuments() throws IOException{
+            System.out.println("update documents");
+//            Document[] documentArray=(Document[]) documents.toArray();
+//            System.out.println(documentArray.length);
+            out.writeObject(new SocketData<>(
+                    "updateDocuments",
+                    new ArrayList<>(documents)
+            ));
+        }
     }
 
 }

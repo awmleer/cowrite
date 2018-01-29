@@ -5,13 +5,15 @@ import java.util.HashSet;
 
 public class Document implements Serializable {
     private int id;
+    private static int nextId=0;
     private User creator;
     private HashSet<User> editingUsers;
     private String title;
     private String content;
 
-    public Document(int id, User creator, String title){
-        this.id=id;
+    public Document(User creator, String title){
+        this.id=nextId;
+        nextId++;
         this.creator=creator;
         this.title=title;
     }

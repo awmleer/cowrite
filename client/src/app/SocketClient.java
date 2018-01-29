@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.function.Function;
 
@@ -55,17 +56,28 @@ public class SocketClient {
 //        }
 //    }
 
-    public boolean login(String username, String password) {
+    public void login(String username, String password) {
         try {
             outputStream.writeObject(new SocketData<>(
                     "login",
                     new Login(username, password)
             ));
-            return true;
         }catch (IOException e){
-            return false;
+            e.printStackTrace();
         }
     }
+
+    public void addDocument(String title){
+        try{
+            outputStream.writeObject(new SocketData<>(
+                    "addDocument",
+                    title
+            ));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 
     public static SocketClient getSocketClient(){
         if(socketClient==null){
@@ -105,8 +117,9 @@ public class SocketClient {
             Platform.runLater(()->homeController.updateUser(user));
         }
         private void handleUpdateDocuments(SocketDataBase data){
-            HashSet<Document> documents=((SocketData<HashSet<Document>>)data).getData();
+            ArrayList<Document> documents=((SocketData<ArrayList<Document>>)data).getData();
             System.out.println(documents.size());
+            homeController.updateDocumentList(documents);
         }
     }
 
