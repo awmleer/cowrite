@@ -114,9 +114,9 @@ public class HomeController {
         TextInputDialog dialog;
         Optional<String> result;
         dialog = new TextInputDialog("");
-        dialog.setTitle("Login");
-        dialog.setHeaderText("Username");
-        dialog.setContentText("Please enter your username:");
+        dialog.setTitle("Add document");
+        dialog.setHeaderText("Add document");
+        dialog.setContentText("Please enter the title:");
         result = dialog.showAndWait();
         if (result.isPresent()){
             SocketClient.getSocketClient().addDocument(result.get());
